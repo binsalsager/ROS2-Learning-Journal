@@ -14,9 +14,9 @@ Design Patterns
 Today's Focus: Deep dive into the fundamentals of a ROS 2 Publisher node.
 
 🧠 1. Core Concepts (The Physics)
-Class: The blueprint or schematic (e.g., the Iron Man suit design). It defines what an object is and what it can do.
+Class: The blueprint or schematic. It defines what an object is and what it can do.
 
-Object (Instance): The actual, working thing built from the blueprint (e.g., the Mark II suit). It has its own independent variables and state.
+Object (Instance): The actual, working thing built from the blueprint. It has its own independent variables and state.
 
 Node: A single, running ROS 2 program. In code, it's an object created from a Node class.
 
