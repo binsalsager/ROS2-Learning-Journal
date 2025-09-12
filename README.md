@@ -144,16 +144,16 @@ Step 2: Declaring Dependencies (package.xml): Listed required packages like rclp
 
 Step 3: The Build, Source, & Run Cycle: The core workflow to compile and execute the node.
 
-📝 Entry Date: 2025-09-14
+📝 Entry Date: 2025-09-13
 Today's Focus: Stepping into high-performance robotics with C++ and configuring the build system.
 
 Phase 4: High-Performance Nodes with C++
 Step 1: Configuring the C++ Build System
-Unlike Python, C++ nodes require explicit build instructions in the CMakeLists.txt file. This file serves as the assembly manual for the colcon compiler.
+Unlike Python, C++ nodes require explicit build instructions in the CMakeLists.txt file. This file serves as the assembly manual for the colcon compiler. It must be kept in sync with the dependencies declared in package.xml.
 
 Key CMakeLists.txt Commands:
 
-# Find required ROS 2 libraries
+# Find required ROS 2 libraries (must match package.xml)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
@@ -168,6 +168,7 @@ ament_target_dependencies(
 )
 
 # Install the final executable so `ros2 run` can find it
+# Note the correct CMake variable syntax: ${...}
 install(
     TARGETS simple_publisher
     DESTINATION lib/${PROJECT_NAME}
