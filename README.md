@@ -87,7 +87,7 @@ if __name__ == '__main__':
     main()
 
 📡 4. Design Patterns
-Python Publisher Pattern
+🐍 Python Publisher Pattern
 Goal: Repeatedly send messages to a topic at a fixed frequency.
 Key Files: your_node.py, setup.py, package.xml
 
@@ -96,7 +96,7 @@ Inside __init__(self):
 self.publisher_ = self.create_publisher(String, 'topic_name', 10)
 self.timer = self.create_timer(0.5, self.publisher_callback)
 
-C++ Publisher Pattern
+⚙️ C++ Publisher Pattern
 Goal: Create a high-performance publisher using compiled C++.
 Key Files: your_node.cpp, CMakeLists.txt, package.xml
 
@@ -109,7 +109,7 @@ pub_ = create_publisher<std_msgs::msg::String>("topic_name", 10);
 timer_ = create_wall_timer(500ms, std::bind(&MyNode::timerCallback, this));
 
 ✨ 5. Development Environment Best Practices
-IDE Configuration for ROS 2 (The "Red Squiggles" Fix)
+💡 IDE Configuration for ROS 2 (The "Red Squiggles" Fix)
 Problem: By default, VS Code's IntelliSense (the code-checking assistant) does not know where the ROS 2 libraries (rclcpp, std_msgs, etc.) are located, causing false errors and disabling auto-completion.
 
 Solution: Always launch VS Code from a terminal that has the ROS 2 workspace sourced. This allows the editor to inherit the environment's "map" to all the necessary libraries.
@@ -130,12 +130,12 @@ Following this procedure ensures a fully functional IDE with auto-completion and
 📝 Entry Date: 2025-09-12
 Today's Focus: Building a workspace, creating a package, writing a publisher node, and bringing it to life.
 
-Phase 2: Building the R&D Lab (bumperbot_practise_ws)
+🏭 Phase 2: Building the R&D Lab (bumperbot_practise_ws)
 I constructed a new, isolated workspace to build packages from scratch, solidifying my understanding of the ROS 2 project structure. The process involved initializing the workspace, creating the first package, and activating the environment.
 
 Key Takeaway: The source install/setup.bash command is terminal-specific and fundamental for environment management.
 
-Phase 3: Building & Running the First Python Node
+▶️ Phase 3: Building & Running the First Python Node
 This phase covered the full lifecycle of a Python node, from code to a running process.
 
 Step 1: Making the Node Executable (setup.py): Declared the script as a runnable "entry point".
@@ -147,8 +147,8 @@ Step 3: The Build, Source, & Run Cycle: The core workflow to compile and execute
 📝 Entry Date: 2025-09-13
 Today's Focus: Stepping into high-performance robotics with C++ and configuring the build system.
 
-Phase 4: High-Performance Nodes with C++
-Step 1: Configuring the C++ Build System
+🚀 Phase 4: High-Performance Nodes with C++
+🔧 Step 1: Configuring the C++ Build System
 Unlike Python, C++ nodes require explicit build instructions in the CMakeLists.txt file. This file serves as the assembly manual for the colcon compiler. It must be kept in sync with the dependencies declared in package.xml.
 
 Key CMakeLists.txt Commands:
