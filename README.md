@@ -10,9 +10,13 @@ Python Node Structure
 
 Design Patterns
 
+Development Best Practices
+
 Phase 2: Building the R&D Lab
 
-Phase 3: Building & Running the First Node
+Phase 3: Building & Running the First Python Node
+
+Phase 4: High-Performance Nodes with C++
 
 Essential Debugging Commands
 
@@ -41,7 +45,7 @@ Creates a new workspace directory and the essential src subfolder.
 
 ros2 pkg create <package_name> --build-type ament_python
 
-Creates a new Python package inside the src folder.
+Creates a new Python package inside the src folder. For C++, use --build-type ament_cmake.
 
 colcon build
 
@@ -56,29 +60,26 @@ ros2 pkg list
 Lists all ROS 2 packages your terminal is aware of.
 
 🏗️ 3. Python Node Structure
-# 1. Imports (The ingredients)
+# 1. Imports
 import rclpy
 from rclpy.node import Node
-# (Import the specific message types you need)
+# ...
 
-# 2. Class Definition (The blueprint)
+# 2. Class Definition
 class MyNode(Node):
-    # 3. Constructor (The setup, runs once per object)
+    # 3. Constructor
     def __init__(self):
         super().__init__('my_node_name')
-        # ...Create publishers, subscribers, timers here...
-
-    # 4. Callbacks / Methods (The actions)
+        # ...
+    # 4. Callbacks
     def my_callback(self):
-        # ...The work happens here...
+        # ...
 
-# 5. Main Execution (The "ON" switch for the program)
+# 5. Main Execution
 def main(args=None):
     rclpy.init(args=args)
-    my_node = MyNode() # <-- The Object is created here!
-    rclpy.spin(my_node) # Keeps the node alive
-    
-    # Cleanup after Ctrl+C
+    my_node = MyNode()
+    rclpy.spin(my_node)
     my_node.destroy_node()
     rclpy.shutdown()
 
@@ -86,94 +87,99 @@ if __name__ == '__main__':
     main()
 
 📡 4. Design Patterns
-Publisher Pattern (The Broadcaster)
+Python Publisher Pattern
 Goal: Repeatedly send messages to a topic at a fixed frequency.
-
-Key Import:
-
-from std_msgs.msg import String
+Key Files: your_node.py, setup.py, package.xml
 
 Inside __init__(self):
 
-# Create the publisher
-# Format: self.create_publisher(MsgType, 'topic_name', QoS_queue_size)
-self.publisher_ = self.create_publisher(String, 'chatter', 10)
+self.publisher_ = self.create_publisher(String, 'topic_name', 10)
+self.timer = self.create_timer(0.5, self.publisher_callback)
 
-# Create a timer to trigger the callback
-timer_period = 0.5 # seconds
-self.timer = self.create_timer(timer_period, self.publisher_callback)
+C++ Publisher Pattern
+Goal: Create a high-performance publisher using compiled C++.
+Key Files: your_node.cpp, CMakeLists.txt, package.xml
 
-The Callback Function:
+Inside the Constructor:
 
-def publisher_callback(self):
-    msg = String()
-    msg.data = "My message content"
-    self.publisher_.publish(msg)
-    self.get_logger().info(f'Publishing: "{msg.data}"')
+// Note: Message type is a template argument <...>
+pub_ = create_publisher<std_msgs::msg::String>("topic_name", 10);
+
+// std::bind is used to link a member function as a callback
+timer_ = create_wall_timer(500ms, std::bind(&MyNode::timerCallback, this));
+
+✨ 5. Development Environment Best Practices
+IDE Configuration for ROS 2 (The "Red Squiggles" Fix)
+Problem: By default, VS Code's IntelliSense (the code-checking assistant) does not know where the ROS 2 libraries (rclcpp, std_msgs, etc.) are located, causing false errors and disabling auto-completion.
+
+Solution: Always launch VS Code from a terminal that has the ROS 2 workspace sourced. This allows the editor to inherit the environment's "map" to all the necessary libraries.
+
+The Official Startup Procedure:
+
+# 1. Navigate to your workspace root
+cd ~/your_ros2_ws
+
+# 2. Source the environment to give the terminal the library map
+source install/setup.bash
+
+# 3. Launch VS Code from this context-aware terminal
+code .
+
+Following this procedure ensures a fully functional IDE with auto-completion and real-time error checking, dramatically speeding up development.
 
 📝 Entry Date: 2025-09-12
 Today's Focus: Building a workspace, creating a package, writing a publisher node, and bringing it to life.
 
 Phase 2: Building the R&D Lab (bumperbot_practise_ws)
-I constructed a new, isolated workspace to build packages from scratch, solidifying my understanding of the ROS 2 project structure.
-
-Step 1: Workspace Initialization (mkdir, cd, colcon build)
-
-Step 2: Package Creation (ros2 pkg create)
-
-Step 3: Building & Activating (colcon build, source)
+I constructed a new, isolated workspace to build packages from scratch, solidifying my understanding of the ROS 2 project structure. The process involved initializing the workspace, creating the first package, and activating the environment.
 
 Key Takeaway: The source install/setup.bash command is terminal-specific and fundamental for environment management.
 
-Phase 3: Building & Running the First Node
-Step 1: Making the Node Executable
-For a Python script to be runnable with ros2 run, it must be declared as an "entry point." This is done in setup.py.
+Phase 3: Building & Running the First Python Node
+This phase covered the full lifecycle of a Python node, from code to a running process.
 
-File: setup.py
+Step 1: Making the Node Executable (setup.py): Declared the script as a runnable "entry point".
 
-entry_points={
-    'console_scripts': [
-        'simple_publisher = bumperbot_py_examples.simple_publisher:main',
-    ],
-},
+Step 2: Declaring Dependencies (package.xml): Listed required packages like rclpy.
 
-This line tells colcon: "Create an executable named simple_publisher which, when run, will execute the main function from the simple_publisher.py file."
+Step 3: The Build, Source, & Run Cycle: The core workflow to compile and execute the node.
 
-Step 2: Declaring Dependencies
-A node requires other ROS 2 packages to function (e.g., rclpy, std_msgs). These must be declared in package.xml so the build system knows about them.
+📝 Entry Date: 2025-09-14
+Today's Focus: Stepping into high-performance robotics with C++ and configuring the build system.
 
-File: package.xml
+Phase 4: High-Performance Nodes with C++
+Step 1: Configuring the C++ Build System
+Unlike Python, C++ nodes require explicit build instructions in the CMakeLists.txt file. This file serves as the assembly manual for the colcon compiler.
 
-<depend>rclpy</depend>
-<depend>std_msgs</depend>
+Key CMakeLists.txt Commands:
 
-Step 3: The Build, Source, & Run Cycle
-With the code written and configured, the final step is to bring the node to life.
+# Find required ROS 2 libraries
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 
-# 1. Build the package (from workspace root)
-colcon build --packages-select bumperbot_py_examples
+# Create the executable from the source file
+add_executable(simple_publisher src/simple_publisher.cpp)
 
-# 2. Source the environment (in a new terminal)
-source install/setup.bash
+# Link the executable against the ROS 2 libraries
+ament_target_dependencies(
+    simple_publisher
+    rclcpp
+    std_msgs
+)
 
-# 3. Run the node
-ros2 run bumperbot_py_examples simple_publisher
+# Install the final executable so `ros2 run` can find it
+install(
+    TARGETS simple_publisher
+    DESTINATION lib/${PROJECT_NAME}
+)
 
-🛠️ 5. Essential Debugging Commands
-These ros2 topic commands are critical for inspecting a running system to verify that nodes are communicating correctly.
+These directives ensure the C++ code is correctly compiled, linked, and installed, transforming the source code into a runnable program.
 
-ros2 topic list
+🛠️ 6. Essential Debugging Commands
+ros2 topic list: Shows all active topics.
 
-Shows all currently active topics in the ROS 2 graph.
+ros2 topic echo /topic_name: Prints live data from a topic.
 
-ros2 topic echo /topic_name
+ros2 topic info /topic_name: Shows topic metadata (type, publisher/subscriber count).
 
-Prints the live data being published to a specific topic. The most useful command for checking if a publisher is working.
-
-ros2 topic info /topic_name
-
-Provides metadata about a topic, including the message type, publisher count, and subscriber count.
-
-ros2 topic hz /topic_name
-
-Calculates and displays the actual publishing frequency (in Hertz) of a topic. Essential for verifying timer rates.
+ros2 topic hz /topic_name: Calculates the publishing frequency of a topic.
