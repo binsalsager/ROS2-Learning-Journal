@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.8)
+project(bumperbot_cpp_examples)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# Find the dependencies (the libraries your code needs)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+
+# Define the executable
+# This tells the compiler to create a program named "simple_publisher"
+# from your "simple_publisher.cpp" source file.
+add_executable(simple_publisher src/simple_publisher.cpp)
+
+# Link the libraries
+# This connects your program to the ROS 2 libraries it uses.
+ament_target_dependencies(
+    simple_publisher
+    rclcpp
+    std_msgs
+)
+
+# Install the executable
+# This places the final program where `ros2 run` can find it.
+# NOTE THE CORRECT SYNTAX: `${PROJECT_NAME}` uses curly braces.
+install(
+    TARGETS simple_publisher
+    DESTINATION lib/${PROJECT_NAME}
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # The following line skips the linter which checks for copyrights.
+  # Comment the line when a copyright and license is added to all source files.
+  set(ament_lint_auto_skip ALL)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()
+
